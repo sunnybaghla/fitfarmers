@@ -67,6 +67,8 @@ router.put("/:id",async(req,res)=>{
     dateOfJoining:req.body.dateOfJoining,
     stauts:req.body.status,
     planType:req.body.planType,
+    planDuration:req.body.planDuration,
+    
     fee:req.body.fee,
 
         }
