@@ -1,4 +1,5 @@
 const express=require("express");
+const res = require("express/lib/response");
 const router=express.Router();
 const userModel=require('../models/users');
 router.post("/",async(req,res)=>{
@@ -6,12 +7,12 @@ router.post("/",async(req,res)=>{
     try
     {
             const savedUser=await newUser.save();
-            res.send(savedUser);
+            res.status(200).send(savedUser);
             console.log(savedUser);
     }
     catch(error)
     {
-        res.send(error)
+        res.status(400).send(error.status+error)
         console.log(error);
     }
 });
@@ -23,7 +24,7 @@ router.get("/",async(req,res)=>{
     }
     catch(error)
     {
-        res.send(error);
+        res.status(400).send(error);
     }
 })
 ///search by id
@@ -35,8 +36,8 @@ router.get("/:id",async(req,res)=>{
             res.status(200).json(userList);
 
     }
-    catch{
-        res.send(500).json(error);
+    catch(error){
+        // res.send(400).json(error);
         console.log(error);
 
     }
@@ -48,10 +49,35 @@ router.get("/search/:key",async(req,res)=>{
             {firstName:{$regex:req.params.key}},
             {mobile:{$regex:req.params.key}},
             {lastName:{$regex:req.params.key}},
-            {adress:{$regex:req.params.key}}
+            {adress:{$regex:req.params.key}},
+            {stauts:req.params.key}
         ]
     });
     res.send(data);
+});
+router.get("/search/stauts/:key",async(req,res)=>{
+    try
+    {
+    let data =await userModel.find({
+        stauts:req.params.key
+    },(error,data)=>{
+        if(error)
+        {
+            console.log(error);
+        }
+        if(data)
+        {
+            res.send(data)
+        }
+    });
+    console.log(data);
+    res.send(data);
+}
+catch(e)
+{
+    res.send(e);
+    console.log(e);
+}
 })
 router.put("/:id",async(req,res)=>{
     const _id=req.params.id;
@@ -65,7 +91,7 @@ router.put("/:id",async(req,res)=>{
     mobile:req.body.mobile,
     adress:req.body.adress,
     dateOfJoining:req.body.dateOfJoining,
-    stauts:req.body.status,
+    stauts:req.body.stauts,
     planType:req.body.planType,
     planDuration:req.body.planDuration,
     
@@ -79,7 +105,7 @@ router.put("/:id",async(req,res)=>{
 }
 catch(e)
 {
-    res.status(404).send(e);
+    res.status(400).send(e.message);
 }
 })
 

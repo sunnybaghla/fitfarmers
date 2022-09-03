@@ -40,9 +40,8 @@ const userSchema=new mongoose.Schema({
         type:Date
     },
     stauts:{
-        type:String,
-        enum:['Active','Inactive'],
-        default:'Active'
+            type:String,
+            default:'Active'    
     },
     planDuration:{
         type:String,
@@ -51,7 +50,7 @@ const userSchema=new mongoose.Schema({
     },
     planType:{
         type:String,
-        enum:['Cardio','Aerobics','Gym']
+        enum:['Cardio','Aerobics','Gym','Gym with Cardio']
     },
     fee:{
         type:Number,
