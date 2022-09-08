@@ -4,7 +4,7 @@ const paymentModel=require("../models/payment");
 router.post("/",async(req,res)=>{
     try{
 
-        const fetchData= new paymentModel(req.body);
+        const fetchData=     new paymentModel(req.body);
     const paymentData=await fetchData.save();
     res.send(paymentData);
     }

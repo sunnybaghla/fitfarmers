@@ -4,6 +4,7 @@ const app=express();
 const userRoute=require('./routes/users');
 const patmentRoute=require('./routes/payment');
 const paymentModel = require("./models/payment");
+const userHistory=require("./routes/userHistory");
 const port=process.env.PORT || 8000;
 const cors=require('cors');
 
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use(cors());
 app.use("/user",userRoute);
 app.use("/payment",patmentRoute);
+app.use('/userHistory',userHistory);
 // app.get("/",(req,res)=>{
 //     res.send("hello from get side");
 // })

@@ -12,7 +12,8 @@ router.post("/",async(req,res)=>{
     }
     catch(error)
     {
-        res.status(400).send(error.status+error)
+        // res.status(400).send(error.status+error)
+        res.send(error)
         console.log(error);
     }
 });
@@ -63,7 +64,7 @@ router.get("/search/stauts/:key",async(req,res)=>{
     },(error,data)=>{
         if(error)
         {
-            console.log(error);
+            console.log(error.message);
         }
         if(data)
         {
