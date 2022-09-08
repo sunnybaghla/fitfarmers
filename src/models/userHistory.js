@@ -24,6 +24,12 @@ const userHistorySchema= new mongoose.Schema({
     fee:{
         type:Number,
         min:800
+    },
+    balance:{
+        type:Number
+    },
+    remark:{
+        type:String
     }
 
 
