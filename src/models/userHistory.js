@@ -30,6 +30,10 @@ const userHistorySchema= new mongoose.Schema({
     },
     remark:{
         type:String
+    },
+    planCompleted:{
+        type:String
+
     }
 
 

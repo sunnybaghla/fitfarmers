@@ -92,9 +92,11 @@ router.put("/:id",async(req,res)=>{
     mobile:req.body.mobile,
     adress:req.body.adress,
     dateOfJoining:req.body.dateOfJoining,
+    dateOfEnding:req.body.dateOfEnding,
     stauts:req.body.stauts,
     planType:req.body.planType,
     planDuration:req.body.planDuration,
+
     
     fee:req.body.fee,
 
