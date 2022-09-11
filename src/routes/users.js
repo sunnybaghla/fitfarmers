@@ -94,11 +94,12 @@ router.put("/:id",async(req,res)=>{
     dateOfJoining:req.body.dateOfJoining,
     dateOfEnding:req.body.dateOfEnding,
     stauts:req.body.stauts,
+    excerciseType:req.body.excerciseType,
     planType:req.body.planType,
-    planDuration:req.body.planDuration,
 
     
-    fee:req.body.fee,
+    totalAmount:req.body.totalAmount,
+    pendingAmount:req.body.pendingAmount,
 
         }
     },{

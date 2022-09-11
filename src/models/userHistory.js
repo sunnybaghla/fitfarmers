@@ -21,11 +21,11 @@ const userHistorySchema= new mongoose.Schema({
         type:String,
         // enum:['Cardio','Aerobics','Gym','Gym with Cardio']
     },
-    fee:{
+    totalAmount:{
         type:Number,
         min:800
     },
-    balance:{
+    pendingAmount:{
         type:Number
     },
     remark:{
