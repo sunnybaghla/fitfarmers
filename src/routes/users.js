@@ -1,5 +1,6 @@
 const express=require("express");
 const res = require("express/lib/response");
+const { set } = require("mongoose");
 const router=express.Router();
 const userModel=require('../models/users');
 router.post("/",async(req,res)=>{
@@ -20,6 +21,7 @@ router.post("/",async(req,res)=>{
 router.get("/",async(req,res)=>{
     try
     {
+        
         const allUser= await userModel.find();
         res.send(allUser);
     }
@@ -28,6 +30,37 @@ router.get("/",async(req,res)=>{
         res.status(400).send(error);
     }
 })
+router.get("/pendingAmountUser",async(req,res)=>{
+    try
+    {
+        // const creditAmount2= await userModel.find(totalAmount);
+        // res.send(creditAmount2)
+        const data= await userModel.find({$expr:{$gt:["$totalAmount","$creditAmount"]}});
+
+        console.log(data);
+        res.send(data);
+    }
+    catch(e)
+    {
+        res.send(e);
+    }
+});
+router.get("/paidAmountUser",async(req,res)=>{
+    try
+    {
+        // const creditAmount2= await userModel.find(totalAmount);
+        // res.send(creditAmount2)
+        const data= await userModel.find({$expr:{$eq:["$totalAmount","$creditAmount"]}});
+
+        console.log(data);
+        res.send(data);
+    }
+    catch(e)
+    {
+        res.send(e);
+    }
+});
+
 ///search by id
 router.get("/:id",async(req,res)=>{
     try
@@ -56,6 +89,7 @@ router.get("/search/:key",async(req,res)=>{
     });
     res.send(data);
 });
+
 router.get("/search/stauts/:key",async(req,res)=>{
     try
     {
@@ -96,10 +130,13 @@ router.put("/:id",async(req,res)=>{
     stauts:req.body.stauts,
     excerciseType:req.body.excerciseType,
     planType:req.body.planType,
+    // totalAmount:req.body.totalAmount
+    // totalAmount:req.body.totalAmount
 
     
     totalAmount:req.body.totalAmount,
-    pendingAmount:req.body.pendingAmount,
+    // pendingAmount:req.body.pendingAmount,
+    creditAmount:req.body.creditAmount
 
         }
     },{
@@ -112,5 +149,17 @@ catch(e)
     res.status(400).send(e.message);
 }
 })
+router.get("/filter2/",async(req,res)=>{
+    try
+    {
+            const data=await userModel.find({creditAmount:{$gte:100}});
+            console.log(data);
+            res.send(data);
+        }
+    catch(e)
+    {
+        res.send(e);
+    }
+});
 
 module.exports=router;

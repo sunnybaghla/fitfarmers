@@ -7,6 +7,9 @@ const paymentSchema=new mongoose.Schema({
         type:Number,
         required:true
     },
+    totalCredit:{
+        type:Number
+    },
     userId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'UserDetail',

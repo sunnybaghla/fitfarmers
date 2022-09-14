@@ -58,6 +58,11 @@ const userSchema=new mongoose.Schema({
     },
     pendingAmount:{
         type:Number
+    },
+    creditAmount:{
+        type:Number,
+        default:0
+        
     }
     
     

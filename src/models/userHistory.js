@@ -12,12 +12,12 @@ const userHistorySchema= new mongoose.Schema({
         type:Date
     },
 
-    planDuration:{
+    planType:{
         type:String,
-        // enum:['Monthly','Quterly','Half Year','Year']
+        // enum:['Monthly','Quterly','Half Year','Year',]
         
     },
-    planType:{
+    excerciseType:{
         type:String,
         // enum:['Cardio','Aerobics','Gym','Gym with Cardio']
     },
@@ -34,6 +34,9 @@ const userHistorySchema= new mongoose.Schema({
     planCompleted:{
         type:String
 
+    },
+    creditAmount:{
+        type:Number
     }
 
 
