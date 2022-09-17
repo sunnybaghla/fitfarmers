@@ -25,10 +25,10 @@ mongoose.connect(process.env.MONGO_URL).then(()=>{
 app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
-app.use("/user",userRoute);
+app.use("/admin",adminRoute);
+app.use("/user",checkAdminAuth,userRoute);
 app.use("/payment",patmentRoute);
 app.use('/userHistory',userHistory);
-app.use("/admin",adminRoute);
 // app.ge"t("/",(req,res)=>{
 //     res.send("hello from get side");
 // })
