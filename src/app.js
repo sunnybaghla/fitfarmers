@@ -5,10 +5,18 @@ const userRoute=require('./routes/users');
 const patmentRoute=require('./routes/payment');
 const paymentModel = require("./models/payment");
 const userHistory=require("./routes/userHistory");
+const adminRoute=require("./routes/admin");
 const port=process.env.PORT || 8000;
 const cors=require('cors');
+const cookieParser=require("cookie-parser");
+const checkAdminAuth=require("./middleware/auth");
+const jwt=require("jsonwebtoken");
 
-mongoose.connect('mongodb+srv://sahil:sahil@cluster0.gedx4a7.mongodb.net/?retryWrites=true&w=majority').then(()=>{
+const bodyParser = require('body-parser');
+app.use(bodyParser.json())
+require('dotenv').config();
+
+mongoose.connect(process.env.MONGO_URL).then(()=>{
     console.log('db connected');
 }).catch((e)=>{
     console.log(e);
@@ -16,14 +24,17 @@ mongoose.connect('mongodb+srv://sahil:sahil@cluster0.gedx4a7.mongodb.net/?retryW
 
 app.use(express.json());
 app.use(cors());
+app.use(cookieParser());
 app.use("/user",userRoute);
 app.use("/payment",patmentRoute);
 app.use('/userHistory',userHistory);
-// app.get("/",(req,res)=>{
+app.use("/admin",adminRoute);
+// app.ge"t("/",(req,res)=>{
 //     res.send("hello from get side");
 // })
-app.post("/",(req,res)=>{
-    res.send("hello from app.js")
+app.get("/cookie",(req,res)=>{
+    res.cookie('local cookie',"adadada");
+    res.send("cookie send");
 });
     app.listen(port,()=>{
         console.log("server is running");

@@ -2,6 +2,7 @@ const express=require("express");
 const res = require("express/lib/response");
 const { set } = require("mongoose");
 const router=express.Router();
+const checkAdminAuth=require("../middleware/auth")
 const userModel=require('../models/users');
 router.post("/",async(req,res)=>{
     const newUser=new userModel(req.body);
@@ -18,10 +19,10 @@ router.post("/",async(req,res)=>{
         console.log(error);
     }
 });
-router.get("/",async(req,res)=>{
+router.get("/",checkAdminAuth,async(req,res)=>{
     try
     {
-        
+        console.log("req.cookies.fitFarmers");
         const allUser= await userModel.find();
         res.send(allUser);
     }
