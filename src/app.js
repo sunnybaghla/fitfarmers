@@ -2,7 +2,7 @@ const express=require("express");
 const mongoose=require('mongoose');
 const app=express();
 const userRoute=require('./routes/users');
-const patmentRoute=require('./routes/payment');
+const paymentRoute=require('./routes/payment');
 const paymentModel = require("./models/payment");
 const userHistory=require("./routes/userHistory");
 const adminRoute=require("./routes/admin");
@@ -27,7 +27,7 @@ app.use(cors());
 app.use(cookieParser());
 app.use("/admin",adminRoute);
 app.use("/user",userRoute);
-app.use("/payment",checkAdminAuth,patmentRoute);
+app.use("/payment",paymentRoute);
 app.use('/userHistory',userHistory);
 // app.ge"t("/",(req,res)=>{
 //     res.send("hello from get side");

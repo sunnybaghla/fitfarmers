@@ -2,7 +2,7 @@ const express=require('express');
 const router=express.Router();
 const paymentModel=require("../models/payment");
 const checkAdminAuth=require("../middleware/auth");
-router.post("/",checkAdminAuth,async(req,res)=>{
+router.post("/",async(req,res)=>{
     try{
 
         const fetchData=     new paymentModel(req.body);
@@ -15,7 +15,7 @@ router.post("/",checkAdminAuth,async(req,res)=>{
         }
 
 });
-router.get("/",checkAdminAuth,async(req,res)=>{
+router.get("/",async(req,res)=>{
     try
     {
     const paymentData= await paymentModel.find();
@@ -27,7 +27,19 @@ router.get("/",checkAdminAuth,async(req,res)=>{
     }
 
 });
-router.get("/search/:id",checkAdminAuth,async(req,res)=>{
+router.get("/searchByDate",async(req,res)=>{
+    try
+    {
+    const paymentData= await paymentModel.find({"dateOfPayment":ISODate("2022-09-19")});
+    res.json(paymentData);
+    }
+    catch(e)
+    {
+        res.send(e);
+    }
+
+});
+router.get("/search/:id",async(req,res)=>{
     try
     {
             const usersId= req.params.id;
