@@ -5,15 +5,15 @@ const userSchema=new mongoose.Schema({
     },
     firstName:{
         type:String,
-        required:true,
+        required:'First Name Cant be Empty'
     },
     lastName:{
         type:String,
-        required:true,
+        required:'Last Name Cant be Empty'
     },
     age:{
         type:String,
-        required:true,
+        required:'Please Enter Date of Client',
     },
     gender:{
         type:String
@@ -22,7 +22,7 @@ const userSchema=new mongoose.Schema({
     },
     mobile:{
         type:String,
-        required:true,
+        required:'Mobile number Required',
         unique:true
     },
     email:{
@@ -30,7 +30,7 @@ const userSchema=new mongoose.Schema({
     },
     adress:{
         type:String,
-        required:true
+        required:'Adress is Required'
     },
     dateOfJoining:{
         type:Date,

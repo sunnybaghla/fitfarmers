@@ -4,34 +4,49 @@ const { set } = require("mongoose");
 const router=express.Router();
 const checkAdminAuth=require("../middleware/auth")
 const userModel=require('../models/users');
-router.post("/",async(req,res)=>{
+router.post("/",checkAdminAuth,async(req,res)=>{
     const newUser=new userModel(req.body);
     try
     {
             const savedUser=await newUser.save();
-            res.status(200).send(savedUser);
+            res.json({message:"sucessfully Created",success:true,savedUser});
             console.log(savedUser);
-    }
-    catch(error)
-    {
-        // res.status(400).send(error.status+error)
-        res.send(error)
-        console.log(error);
-    }
-});
-router.get("/",checkAdminAuth,async(req,res)=>{
-    try
-    {
-        console.log("req.cookies.fitFarmers");
-        const allUser= await userModel.find();
-        res.send(allUser);
-    }
-    catch(error)
-    {
-        res.status(400).send(error);
+        }
+        catch(error)
+        {
+            if(error.code===11000)
+            {
+                    res.json({message:"Mobile Number Already Registred",success:false})
+            }
+            // res.status(400).send(error.status+error)
+          else
+            res.json({message:error.message,success:false})
+            
+        }
+    });
+    router.get("/",checkAdminAuth,async(req,res)=>{
+        try
+        {
+            
+            // if(req.userName)
+            // {
+                
+                // }
+                // console.log(req.userName);
+                // console.log("req.cookies.fitFarmers");
+                
+                const allUser= await userModel.find();
+                res.json({success:true,allUser:allUser});
+                // res.send(allUser);
+            }
+            catch(error)
+            {
+            console.log(error)
+        res.json({message:"Cant Load Data",success:false,error:error.code});
+        // res.status(400).send(error);
     }
 })
-router.get("/pendingAmountUser",async(req,res)=>{
+router.get("/pendingAmountUser",checkAdminAuth,async(req,res)=>{
     try
     {
         // const creditAmount2= await userModel.find(totalAmount);
@@ -46,7 +61,7 @@ router.get("/pendingAmountUser",async(req,res)=>{
         res.send(e);
     }
 });
-router.get("/paidAmountUser",async(req,res)=>{
+router.get("/paidAmountUser",checkAdminAuth,async(req,res)=>{
     try
     {
         // const creditAmount2= await userModel.find(totalAmount);
@@ -58,12 +73,13 @@ router.get("/paidAmountUser",async(req,res)=>{
     }
     catch(e)
     {
-        res.send(e);
+        res.json({success:false,message:"please login"})
+
     }
 });
 
 ///search by id
-router.get("/:id",async(req,res)=>{
+router.get("/:id",checkAdminAuth,async(req,res)=>{
     try
     {
         const _id=req.params.id;
@@ -78,7 +94,7 @@ router.get("/:id",async(req,res)=>{
     }
 });
 //search by anthing you want
-router.get("/search/:key",async(req,res)=>{
+router.get("/search/:key",checkAdminAuth,async(req,res)=>{
     let data=await userModel.find({
         "$or":[
             {firstName:{$regex:req.params.key}},
@@ -88,10 +104,21 @@ router.get("/search/:key",async(req,res)=>{
             {stauts:req.params.key}
         ]
     });
-    res.send(data);
+    try
+    {
+    if(data)
+    {
+        res.json({data:data,success:true})
+    }
+    else
+    res.json({success:false,message:'There is No Data'})
+}
+catch(e) 
+{res.json(e)}
+    // res.send(data);
 });
 
-router.get("/search/stauts/:key",async(req,res)=>{
+router.get("/search/stauts/:key",checkAdminAuth,async(req,res)=>{
     try
     {
     let data =await userModel.find({
@@ -115,7 +142,7 @@ catch(e)
     console.log(e);
 }
 })
-router.put("/:id",async(req,res)=>{
+router.put("/:id",checkAdminAuth,async(req,res)=>{
     const _id=req.params.id;
     try{
     const updateData=await userModel.findByIdAndUpdate(_id,{
@@ -150,7 +177,7 @@ catch(e)
     res.status(400).send(e.message);
 }
 })
-router.get("/filter2/",async(req,res)=>{
+router.get("/filter2/",checkAdminAuth,async(req,res)=>{
     try
     {
             const data=await userModel.find({creditAmount:{$gte:100}});

@@ -68,18 +68,19 @@ router.post("/login",async(req,res)=>{
                         const token=jwt.sign({user_id:user._id,userName},process.env.JWT_SECRET_KEY,{expiresIn:'1d'});
                         // this.tokens=this.tokens.concat({token:token});
                         // await this.save().then((response)=>console.log(response)).catch((e)=>console.log(e));
-                      res.cookie("fitFarmers2",token,{
-                        domain:"http://localhost:4200/login"
-                      });
-                        console.log(token);
+                        return res.json({success:true,token:token,message:'login successfull'})
+                    //     res.cookie("fitFarmers2",token,{
+                    //     domain:"http://localhost:4200/login"
+                    //   });
+                        // console.log(token);
                         // console.log(cookie);
 
                         // .then((response)=>{
                         // res.send(response)
                         // }).catch((e)=>{res.send(e)})
                         // user.token=token
-                        res.send(user);
-                        console.log(user)
+                        // res.send(user);
+                        // console.log(user)
                     }
                     else
                     {

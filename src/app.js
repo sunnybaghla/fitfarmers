@@ -26,8 +26,8 @@ app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
 app.use("/admin",adminRoute);
-app.use("/user",checkAdminAuth,userRoute);
-app.use("/payment",patmentRoute);
+app.use("/user",userRoute);
+app.use("/payment",checkAdminAuth,patmentRoute);
 app.use('/userHistory',userHistory);
 // app.ge"t("/",(req,res)=>{
 //     res.send("hello from get side");

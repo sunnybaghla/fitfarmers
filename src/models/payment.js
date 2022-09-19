@@ -5,7 +5,7 @@ const paymentSchema=new mongoose.Schema({
     },
     amount:{
         type:Number,
-        required:true
+        required:'Please Enter the Amount'
     },
     totalCredit:{
         type:Number

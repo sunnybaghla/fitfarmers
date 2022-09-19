@@ -1,8 +1,9 @@
 const express=require("express");
 const router=express.Router();
+const checkAdminAuth=require("../middleware/auth");
 const userHistoryModel= require('../models/userHistory');
 const { route } = require("./payment");
-router.post('/',async(req,res)=>{
+router.post('/',checkAdminAuth,async(req,res)=>{
     try
     {
 
@@ -17,7 +18,7 @@ router.post('/',async(req,res)=>{
     }
 
 });
-router.get('/',async(req,res)=>{
+router.get('/',checkAdminAuth,async(req,res)=>{
     try
     {
     const fetchData= await userHistoryModel.find();
@@ -30,7 +31,7 @@ router.get('/',async(req,res)=>{
     }
 
 });
-router.get("/search/:id",async(req,res)=>{
+router.get("/search/:id",checkAdminAuth,async(req,res)=>{
     try
     {
     const _id=req.params.id;
