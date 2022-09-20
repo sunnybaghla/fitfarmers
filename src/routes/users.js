@@ -34,7 +34,7 @@ router.post("/",checkAdminAuth,async(req,res)=>{
                 // }
                 // console.log(req.userName);
                 // console.log("req.cookies.fitFarmers");
-                
+                console.log('user Name is '+req.userName);
                 const allUser= await userModel.find();
                 res.json({success:true,allUser:allUser});
                 // res.send(allUser);
@@ -53,7 +53,7 @@ router.get("/pendingAmountUser",checkAdminAuth,async(req,res)=>{
         // res.send(creditAmount2)
         const data= await userModel.find({$expr:{$gt:["$totalAmount","$creditAmount"]}});
 
-        console.log(data);
+        // console.log(data);
         res.send(data);
     }
     catch(e)
@@ -68,7 +68,7 @@ router.get("/paidAmountUser",checkAdminAuth,async(req,res)=>{
         // res.send(creditAmount2)
         const data= await userModel.find({$expr:{$eq:["$totalAmount","$creditAmount"]}});
 
-        console.log(data);
+        // console.log(data);
         res.send(data);
     }
     catch(e)
@@ -79,12 +79,17 @@ router.get("/paidAmountUser",checkAdminAuth,async(req,res)=>{
 });
 
 ///search by id
+router.get("/isLogin",checkAdminAuth,(req,res)=>{
+    const userName=req.userName;
+     res.json({userName:userName})
+
+})
 router.get("/:id",checkAdminAuth,async(req,res)=>{
     try
     {
         const _id=req.params.id;
             const userList=await userModel.findById(_id);
-            res.status(200).json(userList);
+            res.status(200).json({userList:userList,userName:req.userName});
 
     }
     catch(error){
@@ -170,11 +175,16 @@ router.put("/:id",checkAdminAuth,async(req,res)=>{
     },{
         new:true
     });
-    res.status(200).json(updateData);
+    res.status(200).json({updateData:updateData,message:"SUcessfully Update User",success:true});
 }
 catch(e)
 {
-    res.status(400).send(e.message);
+    if(e.code==11000)
+    {
+
+        res.json({message:"Mobile No Already Registerd",success:false});
+    }
+    res.json({message:e.message,success:false});
 }
 })
 router.get("/filter2/",checkAdminAuth,async(req,res)=>{

@@ -2,12 +2,13 @@ const express=require('express');
 const router=express.Router();
 const paymentModel=require("../models/payment");
 const checkAdminAuth=require("../middleware/auth");
-router.post("/",async(req,res)=>{
+router.post("/",checkAdminAuth,async(req,res)=>{
     try{
 
         const fetchData=     new paymentModel(req.body);
     const paymentData=await fetchData.save();
-    res.json({success:true,paymentData:paymentData,message:"Payment Sucessfully Updated"});
+    console.log(req.userName)
+    res.json({success:true,paymentData:paymentData,message:"Payment Sucessfully Updated",userName:req.userName});
     }
     catch(error)
     {

@@ -1,6 +1,8 @@
 const express=require('express');
 const app=express();
 const router=express.Router();
+const bcrypt=require("bcrypt");
+const checkAdminAuth=require("../middleware/auth");
 const adminModel=require("../models/admin");
 const jwt=require("jsonwebtoken");
 const { cookie } = require('express/lib/response');
@@ -11,8 +13,10 @@ app.use(cookieParser());
 
 router.post("/",async(req,res)=>{
     try{
+            const body =req.body;
+            const fetchData=new adminModel(body);
 
-        const fetchData=     new adminModel(req.body);
+        // const fetchData=     new adminModel(req.body);
         const userName= await adminModel.findOne({userName:req.body.userName})
         if(userName)
         {
@@ -21,8 +25,12 @@ router.post("/",async(req,res)=>{
         }
         else
         {
+            const salt =await bcrypt.genSalt(10);
+            fetchData.password=await bcrypt.hash(fetchData.password,salt);
+            // console.log(fetchData.password)
+            // console.log(fetchData.password)
     const adminData=await fetchData.save();
-    res.send(adminData);
+    res.json({adminData:adminData});
         }
     }
     catch(error)
@@ -43,14 +51,7 @@ router.get("/",async(req,res)=>{
     }
 
 });
-router.get("/logintemp",(req,res)=>{
-    const token=  jwt.sign({user_id:"123456"},process.env.JWT_SECRET_KEY,{expiresIn:'120s'});
-    // res.send("faf");
 
-    res.cookie("fitFarmers",token);
-    res.send("cookie set");
-    console.log(cookie)
-})
 router.post("/login",async(req,res)=>{
     try
     {
@@ -61,14 +62,15 @@ router.post("/login",async(req,res)=>{
             if(user)
             {
                     // const password= await adminModel.findOne({passowrd:req.body.password});
-                    if(user.password==req.body.password)
+                    const isPasswordMatch= await bcrypt.compare(req.body.password,user.password)
+                    if(isPasswordMatch)
                     {
                         // res.send(user._id);
-                            console.log(user._id);
+                            // console.log(user._id);
                         const token=jwt.sign({user_id:user._id,userName},process.env.JWT_SECRET_KEY,{expiresIn:'1d'});
                         // this.tokens=this.tokens.concat({token:token});
                         // await this.save().then((response)=>console.log(response)).catch((e)=>console.log(e));
-                        return res.json({success:true,token:token,message:'login successfull'})
+                        return res.json({success:true,token:token,message:'login successfull',userName:user.userName,user:user})
                     //     res.cookie("fitFarmers2",token,{
                     //     domain:"http://localhost:4200/login"
                     //   });
@@ -84,12 +86,14 @@ router.post("/login",async(req,res)=>{
                     }
                     else
                     {
-                        res.send("password not match")
+                        res.json({success:false,message:"Please Enter Correct Password"})
+
                     }
             }   
             else
             {
-                res.send("user not found");
+                res.json({success:false,message:"User Not Found"})
+
             }
         }
         else
@@ -101,6 +105,51 @@ router.post("/login",async(req,res)=>{
     {
         res.send(e);
     }
+})
+router.put("/changePassword",checkAdminAuth,async(req,res)=>{
+    const userName=req.userName;
+    // console.log(userName);
+    const body=req.body;
+    //    const {password,newPassword,confirmPassword}=req.body;
+       const user= await adminModel.findOne({userName:userName});
+    //    console.log(user.userName+user.password);
+       if(user)
+       {
+                // console.log(user.password,req.body.newPassword,req.userName)
+            if(req.body.newPassword===req.body.confirmPassword)
+            {
+                // console.log(true)
+                const isMatched=await bcrypt.compare(req.body.password,user.password);
+                // console.log("match")
+                if(isMatched)
+                {
+                    const salt =await bcrypt.genSalt(10);
+                   const hashPassword=await bcrypt.hash(req.body.newPassword,salt);  
+                    try
+                    {
+                    const updateData= await adminModel.findByIdAndUpdate(user._id,{
+                        $set:{
+                            password:hashPassword
+                        }
+                    },{new:true}) 
+                    res.json({message:"sucessfully Changed Password",success:true})
+                }
+                catch(e)
+                {
+                    res.json({message:e.message,success:false})
+
+                }
+
+                }
+                else
+                res.json({message:"Password Not match",success:false})
+            }
+       }
+       else
+       res.json({success:false,message:"Auth Failed"})
+
+
+
 })
 // router.get("/search/:id",async(req,res)=>{
 //     try

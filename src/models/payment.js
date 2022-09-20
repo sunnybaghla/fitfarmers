@@ -15,6 +15,17 @@ const paymentSchema=new mongoose.Schema({
         ref:'UserDetail',
         // require:true
     },
+    userName:{
+        type:String,
+    
+    },
+    mobile:{
+        type:Number
+    },
+    adminName:{
+        type:String,
+        // required:true
+    },
     // adminId:{
     //     type:mongoose.Schema.Types.ObjectId,
     //     ref:'AdminDetail'

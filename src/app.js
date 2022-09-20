@@ -11,8 +11,11 @@ const cors=require('cors');
 const cookieParser=require("cookie-parser");
 const checkAdminAuth=require("./middleware/auth");
 const jwt=require("jsonwebtoken");
+const bcrypt=require("bcrypt");
+
 
 const bodyParser = require('body-parser');
+const islogin = require("./middleware/islogin");
 app.use(bodyParser.json())
 require('dotenv').config();
 
@@ -29,6 +32,7 @@ app.use("/admin",adminRoute);
 app.use("/user",userRoute);
 app.use("/payment",paymentRoute);
 app.use('/userHistory',userHistory);
+app.use('/islogin',islogin)
 // app.ge"t("/",(req,res)=>{
 //     res.send("hello from get side");
 // })
