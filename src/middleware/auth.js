@@ -65,7 +65,8 @@ module.exports=(req,res,next)=>{
     }
     catch(e)
     {
-        res.json({success:false,message:"Please Login",auth:false})
+      console.log(e)
+        res.status(401).json({success:false,message:"Unauthorized",auth:false,code:401,msg:"unauthorized"})
     }
 }
 // module.exports=checkAdminAuth;
