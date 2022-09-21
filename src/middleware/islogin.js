@@ -61,11 +61,12 @@ module.exports=(req,res,next)=>{
     req.userName=decode.userName;
     // res.json({success:true,message:"Login Success",auth:true})
     // console.log(decode.userName)
-    res.json({success:true,message:"Logged In",userName:req.userName})
+    res.json({success:true,message:"authorized",userName:req.userName,code:100,})
       
     }
     catch(e)
     {
+        console.log(e);
         res.json({success:false,message:"Please Login",auth:false})
     }
 }
