@@ -9,18 +9,25 @@ router.post("/",checkAdminAuth,async(req,res)=>{
     try
     {
             const savedUser=await newUser.save();
-            res.json({message:"sucessfully Created",success:true,savedUser});
+            res.json({message:"sucessfully Created",success:true,savedUser:savedUser,code:200,msg:'clientCreated'});
             console.log(savedUser);
         }
         catch(error)
         {
             if(error.code===11000)
             {
-                    res.json({message:"Mobile Number Already Registred",success:false})
+                    res.status(500).json({message:"Mobile Number Already Registred",success:false,code:461,msg:'dupicateMobile'})
             }
             // res.status(400).send(error.status+error)
-          else
-            res.json({message:error.message,success:false})
+          else if(error._message=='userDetail validation failed')
+            res.status(500).json({message:'all field req',success:false,msg:'validationError',code:351})
+            else
+            res.status(404).json({message:e.message,code:404,msg:'internalServerError'});
+
+
+            // console.log(error.code)
+            // console.log(e.message)
+            // console.log(error)
             
         }
     });
@@ -34,15 +41,21 @@ router.post("/",checkAdminAuth,async(req,res)=>{
                 // }
                 // console.log(req.userName);
                 // console.log("req.cookies.fitFarmers");
-                console.log('user Name is '+req.userName);
+                // console.log('user Name is '+req.userName);
                 const allUser= await userModel.find();
-                res.json({success:true,allUser:allUser});
+                if(allUser)
+                res.json({success:true,allUser:allUser,msg:'success',code:200});
                 // res.send(allUser);
+                else
+                res.json({msg:'noDataAvailable',code:462});
+
             }
             catch(error)
             {
-            console.log(error)
-        res.json({message:"Cant Load Data",success:false,error:error.code});
+            // console.log(error)
+            res.status(404).json({message:e.message,code:404,msg:'internalServerError'});
+
+        // res.json({message:"Cant Load Data",success:false,error:error.code});
         // res.status(400).send(error);
     }
 })
@@ -54,11 +67,16 @@ router.get("/pendingAmountUser",checkAdminAuth,async(req,res)=>{
         const data= await userModel.find({$expr:{$gt:["$totalAmount","$creditAmount"]}});
 
         // console.log(data);
-        res.send(data);
+        if(data)
+        res.status(200).json({data:data,code:200,msg:'pendingAmountUserFetched'});
+        else
+        res.status(500).json({msg:'noDataAvailable',code:522 })
     }
     catch(e)
     {
-        res.send(e);
+        res.status(404).json({message:e.message,code:404,msg:'internalServerError'});
+        
+        
     }
 });
 router.get("/paidAmountUser",checkAdminAuth,async(req,res)=>{
@@ -67,14 +85,18 @@ router.get("/paidAmountUser",checkAdminAuth,async(req,res)=>{
         // const creditAmount2= await userModel.find(totalAmount);
         // res.send(creditAmount2)
         const data= await userModel.find({$expr:{$eq:["$totalAmount","$creditAmount"]}});
-
+        if(data)
+        res.status(200).json({data:data,code:200,msg:'pendingAmountUserFetched'});
+        
+        else
+        res.status(500).json({msg:'noDataAvailable',code:500 })
         // console.log(data);
-        res.send(data);
+
     }
     catch(e)
     {
-        res.json({success:false,message:"please login"})
-
+        res.status(404).json({message:e.message,code:404,msg:'internalServerError'});
+        
     }
 });
 
@@ -84,17 +106,21 @@ router.get("/isLogin",checkAdminAuth,(req,res)=>{
      res.json({userName:userName})
 
 })
+
 router.get("/:id",checkAdminAuth,async(req,res)=>{
     try
     {
         const _id=req.params.id;
             const userList=await userModel.findById(_id);
-            res.status(200).json({userList:userList,userName:req.userName});
-
-    }
-    catch(error){
-        // res.send(400).json(error);
-        console.log(error);
+            if(userList)
+            res.status(200).json({userList:userList,userName:req.userName,msg:"okayUserById",code:200});
+            else
+            res.status(500).json({msg:'noDataAvailable',code:500})
+        }
+        catch(error){
+            // res.send(400).json(error);
+            res.status(404).json({message:e.message,code:404,msg:'internalServerError'});
+        // console.log(error);
 
     }
 });
@@ -113,13 +139,15 @@ router.get("/search/:key",checkAdminAuth,async(req,res)=>{
     {
     if(data)
     {
-        res.json({data:data,success:true})
+        res.status(200).json({data:data,success:true,msg:'success',code:200})
     }
     else
-    res.json({success:false,message:'There is No Data'})
+    res.status(200).json({success:false,message:'There is No Data',code:500,msg:"noDataAvailable"})
 }
 catch(e) 
-{res.json(e)}
+{
+    res.status(404).json({code:404,msg:'internalServerError'})
+}
     // res.send(data);
 });
 
@@ -128,24 +156,20 @@ router.get("/search/stauts/:key",checkAdminAuth,async(req,res)=>{
     {
     let data =await userModel.find({
         stauts:req.params.key
-    },(error,data)=>{
-        if(error)
-        {
-            console.log(error.message);
-        }
-        if(data)
-        {
-            res.send(data)
-        }
     });
-    console.log(data);
-    res.send(data);
+    if(data)
+    {
+        res.status(200).json({data:data,msg:'success',code:200});
+        
+    }
+    else
+    res.status(500).json({msg:'noDataAvailable',code:500});
+
 }
 catch(e)
 {
-    res.send(e);
-    console.log(e);
-}
+            res.status(404).json({msg:"internalServerError",code:404})
+    }
 })
 router.put("/:id",checkAdminAuth,async(req,res)=>{
     const _id=req.params.id;
@@ -156,7 +180,7 @@ router.put("/:id",checkAdminAuth,async(req,res)=>{
     lastName:req.body.lastName,
     age:req.body.age,
     gender:req.body.gender,
-    mobile:req.body.mobile,
+    // mobile:req.body.mobile,
     adress:req.body.adress,
     dateOfJoining:req.body.dateOfJoining,
     dateOfEnding:req.body.dateOfEnding,
@@ -175,16 +199,16 @@ router.put("/:id",checkAdminAuth,async(req,res)=>{
     },{
         new:true
     });
-    res.status(200).json({updateData:updateData,message:"SUcessfully Update User",success:true});
+    res.status(200).json({updateData:updateData,message:"Sucessfully Update User",success:true,code:200,msg:'success'});
 }
 catch(e)
 {
     if(e.code==11000)
     {
 
-        res.json({message:"Mobile No Already Registerd",success:false});
+        res.status(500).json({message:"Mobile No Already Registerd",success:false,code:561,msg:"duplicateMobile"});
     }
-    res.json({message:e.message,success:false});
+   else res.status(404).json({message:e.message,success:false,code:404,msg:'internalServerError'});
 }
 })
 router.get("/filter2/",checkAdminAuth,async(req,res)=>{

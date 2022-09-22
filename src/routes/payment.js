@@ -8,11 +8,14 @@ router.post("/",checkAdminAuth,async(req,res)=>{
         const fetchData=     new paymentModel(req.body);
     const paymentData=await fetchData.save();
     console.log(req.userName)
-    res.json({success:true,paymentData:paymentData,message:"Payment Sucessfully Updated",userName:req.userName});
+    res.status(200).json({success:true,paymentData:paymentData,message:"Payment Sucessfully Updated",userName:req.userName});
     }
     catch(error)
     {
-            res.json({success:false,message:error.message});
+     if(error._message=='userDetail validation failed')
+        res.status(500).json({message:'all field req',success:false,msg:'validationError',code:351})
+        else
+        res.status(404).json({message:error.message,code:404,msg:'internalServerError'});
         }
 
 });
@@ -20,11 +23,15 @@ router.get("/",async(req,res)=>{
     try
     {
     const paymentData= await paymentModel.find();
-    res.json(paymentData);
+    if(paymentData)
+    res.status(200).json({paymentData:paymentData,code:200,msg:"success",paymentData:paymentData});
+    else
+    res.status(500).json({msg:"noDataAvailable",code:500});
+
     }
     catch(e)
     {
-        res.send(e);
+        res.status(404).json({message:e.message,code:404,msg:'internalServerError'});
     }
 
 });
@@ -45,11 +52,16 @@ router.get("/search/:id",async(req,res)=>{
     {
             const usersId= req.params.id;
             const paymentsList= await paymentModel.find({userId:usersId});
-            res.send(paymentsList);
+            if(paymentsList)
+            res.status(200).json({paymentsList:paymentsList,code:200,msg:"paymentHistory"});
+            else
+            res.status(500).json({msg:"noDataAvailable",code:451});
+
     }
     catch(error)
     {
-            res.send(error);
+        res.status(404).json({message:e.message,code:404,msg:'internalServerError'});
+
     }
 });
 //clear payments

@@ -9,40 +9,44 @@ router.post('/',checkAdminAuth,async(req,res)=>{
 
         const data= new userHistoryModel(req.body);
         const savedData= await data.save();
-        res.send(savedData);
+        res.status(200).json({savedData:savedData,code:200,msg:"userHistoryOkay"});
     }
     catch(e)
     {
-        res.status(500).send(e);
-        console.log(e);
+        res.status(404).json({message:e.message,code:404,msg:'internalServerError'});
+        
     }
-
+    
 });
 router.get('/',checkAdminAuth,async(req,res)=>{
     try
     {
-    const fetchData= await userHistoryModel.find();
-    res.send(fetchData);
+        const fetchData= await userHistoryModel.find();
+        if(fetchData)
+        res.status(200).json({data:fetchData,code:200,msg:"userHistoryOkay"});
+        else
+        res.status(500).json({code:500,msg:"noDataAvailable"});
     }
     catch(e)
     {
-        res.send(e);
-            console.log(e);
+        res.status(404).json({message:e.message,code:404,msg:'200'});
     }
-
+    
 });
 router.get("/search/:id",checkAdminAuth,async(req,res)=>{
     try
     {
     const _id=req.params.id;
     const data=await userHistoryModel.find({userId:_id});
-    res.send(data);
-    console.log(data);
-    }
-    catch(e)
-    {
-        res.status(500).send(e);
-        console.log(e);
+    if(data)
+    res.status(200).json({data:data,code:200,msg:"DataSearched"});
+    else
+    res.status(500).json({code:500,msg:"noDataAvailable"});
+
+}
+catch(e)
+{
+    res.status(404).json({message:e.message,code:404,msg:'internalServerError'});
     }
 })
 module.exports=router;
