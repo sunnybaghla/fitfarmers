@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 const app = express();
 const router = express.Router();
 const bcrypt = require("bcrypt");
@@ -6,117 +6,156 @@ const checkAdminAuth = require("../middleware/auth");
 const adminModel = require("../models/admin");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-require('dotenv').config();
+require("dotenv").config();
 app.use(cookieParser());
 
 router.post("/", async (req, res) => {
-    try {
-        const body = req.body;
-        const fetchData = new adminModel(body);
+  try {
+    const body = req.body;
+    const fetchData = new adminModel(body);
 
-        // const fetchData=     new adminModel(req.body);
-        const userName = await adminModel.findOne({ userName: req.body.userName })
-        if (userName) {
-            res.status(400).json({ success: false, message: "Unauthorized", auth: false, code: 402, msg: "userExist" })
-
-
-        }
-        else {
-            const salt = await bcrypt.genSalt(10);
-            fetchData.password = await bcrypt.hash(fetchData.password, salt);
-            // console.log(fetchData.password)
-            // console.log(fetchData.password)
-            const adminData = await fetchData.save();
-            res.json({ adminData: adminData });
-        }
+    // const fetchData=     new adminModel(req.body);
+    const userName = await adminModel.findOne({ userName: req.body.userName });
+    if (userName) {
+      res.status(400).json({
+        success: false,
+        message: "Unauthorized",
+        auth: false,
+        code: 402,
+        msg: "userExist",
+      });
+    } else {
+      const salt = await bcrypt.genSalt(10);
+      fetchData.password = await bcrypt.hash(fetchData.password, salt);
+      // console.log(fetchData.password)
+      // console.log(fetchData.password)
+      const adminData = await fetchData.save();
+      res.json({ adminData: adminData });
     }
-    catch (error) {
-        res.send(error);
-    }
-
+  } catch (error) {
+    res.send(error);
+  }
 });
 router.get("/", async (req, res) => {
-    try {
-        const adminData = await adminModel.find();
-        res.send(adminData);
-    }
-    catch (e) {
-        res.send(e);
-    }
-
+  try {
+    const adminData = await adminModel.find();
+    res.send(adminData);
+  } catch (e) {
+    res.send(e);
+  }
 });
 
 router.post("/login", async (req, res) => {
-    try {
-        const { userName, password } = req.body;
-        if (userName && password) {
-            const user = await adminModel.findOne({ userName: req.body.userName });
-            if (user) {
-                // const password= await adminModel.findOne({passowrd:req.body.password});
-                const isPasswordMatch = await bcrypt.compare(req.body.password, user.password)
-                if (isPasswordMatch) {
-                    const token = jwt.sign({ user_id: user._id, userName }, process.env.JWT_SECRET_KEY, { expiresIn: '1d' });
-                    return res.status(200).json({ success: true, token: token, message: 'login successfull', userName: user.userName, user: user, code: 200, msg: 'login' })
-                }
-                else {
-                    res.json({ success: false, message: "Please Enter Correct Password", code: 405, msg: 'passwordIncorrect' })
-
-                }
-            }
-            else {
-                res.json({ success: false, message: "User Not Found", code: 406, msg: "adminNotFound" })
-
-            }
+  try {
+    const { userName, password } = req.body;
+    if (userName && password) {
+      const user = await adminModel.findOne({ userName: req.body.userName });
+      if (user) {
+        // const password= await adminModel.findOne({passowrd:req.body.password});
+        const isPasswordMatch = await bcrypt.compare(
+          req.body.password,
+          user.password
+        );
+        if (isPasswordMatch) {
+          const token = jwt.sign(
+            { user_id: user._id, userName },
+            process.env.JWT_SECRET_KEY,
+            { expiresIn: "1d" }
+          );
+          return res.status(200).json({
+            success: true,
+            token: token,
+            message: "login successfull",
+            userName: user.userName,
+            user: user,
+            code: 200,
+            msg: "login",
+          });
+        } else {
+          res.json({
+            success: false,
+            message: "Please Enter Correct Password",
+            code: 405,
+            msg: "passwordIncorrect",
+          });
         }
-        else {
-            res.status(500).send({ status: "failed", message: "All Field are Required", code: 407, msg: 'allFieldRequired' });
-        }
+      } else {
+        res.json({
+          success: false,
+          message: "User Not Found",
+          code: 406,
+          msg: "adminNotFound",
+        });
+      }
+    } else {
+      res.status(500).send({
+        status: "failed",
+        message: "All Field are Required",
+        code: 407,
+        msg: "allFieldRequired",
+      });
     }
-    catch (e) {
-        res.status(500).send({ code: 444, msg: "wentWrong" });
-    }
-})
+  } catch (e) {
+    res.status(500).send({ code: 444, msg: "wentWrong" });
+  }
+});
 router.put("/changePassword", checkAdminAuth, async (req, res) => {
-    const userName = req.userName;
-    // console.log(userName);
-    const body = req.body;
-    //    const {password,newPassword,confirmPassword}=req.body;
-    const user = await adminModel.findOne({ userName: userName });
-    //    console.log(user.userName+user.password);
-    if (user) {
-        // console.log(user.password,req.body.newPassword,req.userName)
-        if (req.body.newPassword === req.body.confirmPassword) {
-            // console.log(true)
-            const isMatched = await bcrypt.compare(req.body.password, user.password);
-            // console.log("match")
-            if (isMatched) {
-                const salt = await bcrypt.genSalt(10);
-                const hashPassword = await bcrypt.hash(req.body.newPassword, salt);
-                try {
-                 await adminModel.findByIdAndUpdate(user._id, {
-                        $set: {
-                            password: hashPassword
-                        }
-                    }, { new: true })
-                    res.status(200).json({ message: "sucessfully Changed Password", success: true, code: 201, msg: "OkayChangePassword" })
-                }
-                catch (e) {
-                    res.status(500).json({ message: e.message, success: false, code: 444, msg: 'wentWrong' })
-
-                }
-
-                x``
-            }
-            else
-                res.status(500).json({ message: "Password Not match", success: false, code: 'passwordNotMatch', code: 408 })
+  const userName = req.userName;
+  const user = await adminModel.findOne({ userName: userName });
+  if (user) {
+    if (req.body.newPassword === req.body.confirmPassword)
+     {
+      const isMatched = await bcrypt.compare(req.body.password, user.password);
+      if (isMatched) {
+        const salt = await bcrypt.genSalt(10);
+        const hashPassword = await bcrypt.hash(req.body.newPassword, salt);
+        try {
+          await adminModel.findByIdAndUpdate(
+            user._id,
+            {
+              $set: {
+                password: hashPassword,
+              },
+            },
+            { new: true }
+          );
+          res.status(200).json({
+            message: "sucessfully Changed Password",
+            success: true,
+            code: 201,
+            msg: "OkayChangePassword",
+          });
+        } 
+        catch (e) {
+          res.status(500).json({
+            message: e.message,
+            success: false,
+            code: 444,
+            msg: "wentWrong",
+          });
         }
+
+    
+      }
+       else{
+        res.status(500).json({
+          message: "Password Not match",
+          success: false,
+          msg: "passwordNotMatch",
+          code: 408,
+        });
+    }
     }
     else
-        res.status(404).json({ success: false, message: "Auth Failed", code: 406, msg: "adminNotFound" })
-
-
-
-})
+    res.status(500).json({success:false,msg:"NewOldPassNotMatch",msg:566})
+  } else
+    res.status(404).json({
+      success: false,
+      message: "Auth Failed",
+      code: 406,
+      msg: "adminNotFound",
+    });
+});
 // router.get("/search/:id",async(req,res)=>{
 //     try
 //     {
