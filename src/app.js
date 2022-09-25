@@ -40,6 +40,9 @@ app.get("/cookie",(req,res)=>{
     res.cookie('local cookie',"adadada");
     res.send("cookie send");
 });
+app.get('*', function(req, res){
+    res.status(404).send('what???');
+  });
     app.listen(port,()=>{
         console.log("server is running");
     });

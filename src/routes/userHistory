@@ -6,7 +6,7 @@ const { route } = require("./payment");
 router.post('/',checkAdminAuth,async(req,res)=>{
     try
     {
-
+        
         const data= new userHistoryModel(req.body);
         const savedData= await data.save();
         res.status(200).json({savedData:savedData,code:200,msg:"userHistoryOkay"});
@@ -25,7 +25,7 @@ router.get('/',checkAdminAuth,async(req,res)=>{
         if(fetchData)
         res.status(200).json({data:fetchData,code:200,msg:"userHistoryOkay"});
         else
-        res.status(500).json({code:500,msg:"noDataAvailable"});
+        res.json({code:500,msg:"noDataAvailable"});
     }
     catch(e)
     {
@@ -41,7 +41,7 @@ router.get("/search/:id",checkAdminAuth,async(req,res)=>{
     if(data)
     res.status(200).json({data:data,code:200,msg:"DataSearched"});
     else
-    res.status(500).json({code:500,msg:"noDataAvailable"});
+    res.json({code:500,msg:"noDataAvailable"});
 
 }
 catch(e)

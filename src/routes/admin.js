@@ -101,12 +101,20 @@ router.post("/login", async (req, res) => {
 });
 router.put("/changePassword", checkAdminAuth, async (req, res) => {
   const userName = req.userName;
+  try
+
+  {
   const user = await adminModel.findOne({ userName: userName });
-  if (user) {
     if (req.body.newPassword === req.body.confirmPassword)
      {
       const isMatched = await bcrypt.compare(req.body.password, user.password);
-      if (isMatched) {
+      console.log(isMatched)
+      if (!isMatched) {
+     
+        res.json({success:false,msg:"existPasswordIsIncorrect"})
+
+      }
+       else{
         const salt = await bcrypt.genSalt(10);
         const hashPassword = await bcrypt.hash(req.body.newPassword, salt);
         try {
@@ -136,25 +144,26 @@ router.put("/changePassword", checkAdminAuth, async (req, res) => {
         }
 
     
-      }
-       else{
-        res.status(500).json({
-          message: "Password Not match",
-          success: false,
-          msg: "passwordNotMatch",
-          code: 408,
-        });
+     
+       
     }
     }
     else
-    res.status(500).json({success:false,msg:"NewOldPassNotMatch",msg:566})
-  } else
+    res.json({success:false,msg:"NewOldPassNotMatch"})
+  } 
+
+   
+  
+  catch(e)
+  {
     res.status(404).json({
       success: false,
       message: "Auth Failed",
       code: 406,
       msg: "adminNotFound",
     });
+  }
+  
 });
 // router.get("/search/:id",async(req,res)=>{
 //     try

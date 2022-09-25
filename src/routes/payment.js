@@ -26,7 +26,7 @@ router.get("/",async(req,res)=>{
     if(paymentData)
     res.status(200).json({paymentData:paymentData,code:200,msg:"success",paymentData:paymentData});
     else
-    res.status(500).json({msg:"noDataAvailable",code:500});
+    res.json({msg:"noDataAvailable",code:500});
 
     }
     catch(e)
@@ -55,7 +55,7 @@ router.get("/search/:id",async(req,res)=>{
             if(paymentsList)
             res.status(200).json({paymentsList:paymentsList,code:200,msg:"paymentHistory"});
             else
-            res.status(500).json({msg:"noDataAvailable",code:451});
+            res.json({msg:"noDataAvailable",code:451});
 
     }
     catch(error)

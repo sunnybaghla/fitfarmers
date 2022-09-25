@@ -70,7 +70,7 @@ router.get("/pendingAmountUser",checkAdminAuth,async(req,res)=>{
         if(data)
         res.status(200).json({data:data,code:200,msg:'pendingAmountUserFetched'});
         else
-        res.status(500).json({msg:'noDataAvailable',code:522 })
+        res.json({msg:'noDataAvailable',code:522 })
     }
     catch(e)
     {
@@ -89,7 +89,7 @@ router.get("/paidAmountUser",checkAdminAuth,async(req,res)=>{
         res.status(200).json({data:data,code:200,msg:'pendingAmountUserFetched'});
         
         else
-        res.status(500).json({msg:'noDataAvailable',code:500 })
+        res.json({msg:'noDataAvailable',code:500 })
         // console.log(data);
 
     }
@@ -111,11 +111,16 @@ router.get("/:id",checkAdminAuth,async(req,res)=>{
     try
     {
         const _id=req.params.id;
+        try
+        {
             const userList=await userModel.findById(_id);
-            if(userList)
+        
             res.status(200).json({userList:userList,userName:req.userName,msg:"okayUserById",code:200});
-            else
-            res.status(500).json({msg:'noDataAvailable',code:500})
+        }
+        catch(e)
+        {
+            res.json({msg:'noDataAvailable',code:500})
+        }
         }
         catch(error){
             // res.send(400).json(error);
@@ -142,7 +147,7 @@ router.get("/search/:key",checkAdminAuth,async(req,res)=>{
         res.status(200).json({data:data,success:true,msg:'success',code:200})
     }
     else
-    res.status(200).json({success:false,message:'There is No Data',code:500,msg:"noDataAvailable"})
+    res.json({success:false,message:'There is No Data',code:500,msg:"noDataAvailable"})
 }
 catch(e) 
 {
@@ -163,7 +168,7 @@ router.get("/search/stauts/:key",checkAdminAuth,async(req,res)=>{
         
     }
     else
-    res.status(500).json({msg:'noDataAvailable',code:500});
+    res.json({msg:'noDataAvailable',code:500});
 
 }
 catch(e)
