@@ -52,12 +52,12 @@ const adminModel=require("../models/admin");
 //     // }
     
 // }
-module.exports=(req,res,next)=>{
+module.exports=async(req,res,next)=>{
     try{
 
     
     const token= req.headers.authorization.split(' ')[1];
-    const decode=jwt.verify(token,process.env.JWT_SECRET_KEY);
+    const decode=await jwt.verify(token,process.env.JWT_SECRET_KEY);
     req.userName=decode.userName;
     // res.json({success:true,message:"Login Success",auth:true})
     // console.log(decode.userName)

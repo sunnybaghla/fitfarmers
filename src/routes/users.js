@@ -228,5 +228,8 @@ router.get("/filter2/",checkAdminAuth,async(req,res)=>{
         res.send(e);
     }
 });
+router.get('*',(req,res)=>{
+    res.send('error');
+})
 
 module.exports=router;

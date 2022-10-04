@@ -60,7 +60,7 @@ router.get("/search/:id",async(req,res)=>{
     }
     catch(error)
     {
-        res.status(404).json({message:e.message,code:404,msg:'internalServerError'});
+        res.status(404).json({message:message,code:404,msg:'internalServerError'});
 
     }
 });
