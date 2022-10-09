@@ -192,6 +192,8 @@ router.put("/:id",checkAdminAuth,async(req,res)=>{
     stauts:req.body.stauts,
     excerciseType:req.body.excerciseType,
     planType:req.body.planType,
+    email:req.body.email,
+    mobile:req.body.mobile,
     // totalAmount:req.body.totalAmount
     // totalAmount:req.body.totalAmount
 

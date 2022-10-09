@@ -33,8 +33,8 @@ const userSchema=new mongoose.Schema({
         required:'Adress is Required'
     },
     dateOfJoining:{
-        type:Date,
-        default:Date.now
+        type:Date
+        // default:Date.now
     },
     dateOfEnding:{
         type:Date

@@ -9,41 +9,41 @@ const cookieParser = require("cookie-parser");
 require("dotenv").config();
 app.use(cookieParser());
 
-router.post("/", async (req, res) => {
-  try {
-    const body = req.body;
-    const fetchData = new adminModel(body);
+// router.post("/", async (req, res) => {
+//   try {
+//     const body = req.body;
+//     const fetchData = new adminModel(body);
 
-    // const fetchData=     new adminModel(req.body);
-    const userName = await adminModel.findOne({ userName: req.body.userName });
-    if (userName) {
-      res.status(400).json({
-        success: false,
-        message: "Unauthorized",
-        auth: false,
-        code: 402,
-        msg: "userExist",
-      });
-    } else {
-      const salt = await bcrypt.genSalt(10);
-      fetchData.password = await bcrypt.hash(fetchData.password, salt);
-      // console.log(fetchData.password)
-      // console.log(fetchData.password)
-      const adminData = await fetchData.save();
-      res.json({ adminData: adminData });
-    }
-  } catch (error) {
-    res.send(error);
-  }
-});
-router.get("/", async (req, res) => {
-  try {
-    const adminData = await adminModel.find();
-    res.send(adminData);
-  } catch (e) {
-    res.send(e);
-  }
-});
+//     // const fetchData=     new adminModel(req.body);
+//     const userName = await adminModel.findOne({ userName: req.body.userName });
+//     if (userName) {
+//       res.status(400).json({
+//         success: false,
+//         message: "Unauthorized",
+//         auth: false,
+//         code: 402,
+//         msg: "userExist",
+//       });
+//     } else {
+//       const salt = await bcrypt.genSalt(10);
+//       fetchData.password = await bcrypt.hash(fetchData.password, salt);
+//       // console.log(fetchData.password)
+//       // console.log(fetchData.password)
+//       const adminData = await fetchData.save();
+//       res.json({ adminData: adminData });
+//     }
+//   } catch (error) {
+//     res.send(error);
+//   }
+// });
+// router.get("/", async (req, res) => {
+//   try {
+//     const adminData = await adminModel.find();
+//     res.send(adminData);
+//   } catch (e) {
+//     res.send(e);
+//   }
+// });
 
 router.post("/login", async (req, res) => {
   try {
