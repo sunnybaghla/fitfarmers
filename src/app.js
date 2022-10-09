@@ -1,6 +1,8 @@
 const express=require("express");
 const mongoose=require('mongoose');
 const app=express();
+const http=require('http');
+const https=require('https');
 const userRoute=require('./routes/users');
 const paymentRoute=require('./routes/payment');
 const paymentModel = require("./models/payment");
@@ -12,12 +14,17 @@ const cookieParser=require("cookie-parser");
 const checkAdminAuth=require("./middleware/auth");
 const jwt=require("jsonwebtoken");
 const bcrypt=require("bcrypt");
+const fs=require("fs");
 
 
 const bodyParser = require('body-parser');
 const islogin = require("./middleware/islogin");
 app.use(bodyParser.json())
 require('dotenv').config();
+const options={
+    key:fs.readFileSync("server.key"),
+    cert:fs.readFileSync("server.cert")
+}
 
 mongoose.connect(process.env.MONGO_URL).then(()=>{
     console.log('db connected');
@@ -43,6 +50,8 @@ app.get("/cookie",(req,res)=>{
 app.get('/*', function(req, res){
     res.status(404).send('what???');
   });
-    app.listen(port,()=>{
+  const httpsServer=https.createServer(options,app);
+  
+    https.createServer(options,app).listen(port,()=>{
         console.log("server is running");
-    });
+    })
