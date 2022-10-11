@@ -49,7 +49,7 @@ app.use('/islogin',islogin)
 // })
 app.get("/cookie",(req,res)=>{
     res.cookie('local cookie',"adadada");
-    res.send("cookie send");
+    res.send("cooie send");
 });
 app.get('/*', function(req, res){
     res.status(404).send('what???');
