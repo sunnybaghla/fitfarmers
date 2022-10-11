@@ -31,7 +31,7 @@ router.post("/",checkAdminAuth,async(req,res)=>{
             
         }
     });
-    router.get("/",checkAdminAuth,async(req,res)=>{
+    router.get("/",async(req,res)=>{
         try
         {
             
