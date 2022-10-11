@@ -52,6 +52,6 @@ app.get('/*', function(req, res){
   });
   const httpsServer=https.createServer(options,app);
   
-    https.createServer(options,app).listen(port,()=>{
+    app.listen(port,()=>{
         console.log("server is running");
     })
