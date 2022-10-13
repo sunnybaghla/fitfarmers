@@ -26,7 +26,7 @@ const options={
     cert:fs.readFileSync("server.cert")
 }
 
-mongoose.connect('mongodb+srv://sahil:sahil@cluster0.gedx4a7.mongodb.net/?retryWrites=true&w=majority').then(()=>{
+mongoose.connect(process.env.MONGO_URL).then(()=>{
     console.log('db connected');
 }).catch((e)=>{
     console.log(e);

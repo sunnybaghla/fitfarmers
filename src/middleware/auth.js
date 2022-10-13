@@ -57,7 +57,7 @@ module.exports=async(req,res,next)=>{
 
     
     const token= req.headers.authorization.split(' ')[1];
-    const decode=await jwt.verify(token,'asdafskdlfnsdfsoadfoiandfoiadnfoianf');
+    const decode=await jwt.verify(token,process.env.JWT_SECRET_KEY);
     req.userName=decode.userName;
     // res.json({success:true,message:"Login Success",auth:true})
     // console.log(decode.userName)
