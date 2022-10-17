@@ -96,7 +96,7 @@ router.post("/login", async (req, res) => {
       });
     }
   } catch (e) {
-    res.status(500).send({ code: 444, msg: "wentWrong",e:e});
+    res.status(500).send({ code: 444, msg: "wentW=rong",e:e});
   }
 });
 router.put("/changePassword", checkAdminAuth, async (req, res) => {
