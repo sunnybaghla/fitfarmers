@@ -26,7 +26,7 @@ const options={
     cert:fs.readFileSync("server.cert")
 }
 
-mongoose.connect(process.env.MONGO_URL,{useNewUrlParser: true }).then(()=>{
+mongoose.connect(process.env.MONGO_URL).then(()=>{
     console.log('db connected');
 }).catch((e)=>{
     console.log(e);
